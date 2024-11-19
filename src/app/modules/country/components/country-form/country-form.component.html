@@ -1,0 +1,30 @@
+<form [formGroup]="form" class="text-sm" (ngSubmit)="submit()" ngNativeValidate>
+    <div class="mb-5">
+        <label for="name">Nome</label>
+        <input id="name" type="text" placeholder="Nome do País" class="form-input" formControlName="name" />
+        @if(nameError) {
+        <div data-testid="name-validation" class="text-danger">
+            {{ nameError }}l
+        </div>
+        }
+    </div>
+    <div class="mb-5">
+        <label for="code">Código</label>
+        <input id="code" type="text" placeholder="Código ISO" class="form-input" formControlName="code" />
+        @if(codeError) {
+        <div data-testid="code-validation" class="text-danger">
+            {{ codeError }}l
+        </div>
+        }
+    </div>
+
+    <div class="mt-8 flex items-center justify-end">
+        @if(modal) {
+        <button type="button" class="btn btn-outline-danger" (click)="closeModal()">Cancelar</button>
+        }
+        @if(!readOnly) {
+        <button type="submit" class="btn btn-primary ltr:ml-4 rtl:mr-4">{{ model ? 'Actualizar' : 'Salvar' }}</button>
+        }
+
+    </div>
+</form>

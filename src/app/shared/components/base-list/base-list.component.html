@@ -1,0 +1,77 @@
+<div class="panel mt-5 h-[calc(100vh-190px)]">
+    <div class="mb-4.5 flex flex-col gap-5 md:flex-row md:items-center">
+        <div class="flex items-center gap-2">
+            <button class="btn btn-primary gap-2" (click)="openFormModal()">
+                <i class="fa-solid fa-plus fa-fw"></i>
+                Adicionar
+            </button>
+        </div>
+        <div class="ltr:ml-auto rtl:mr-auto">
+            <input [(ngModel)]="search" type="text" class="form-input" placeholder="Pesquisar..." />
+        </div>
+    </div>
+
+    <ng-datatable [rows]="rows" [pageSize]="pagination.size" [page]="pagination.page" [loading]="loading"
+        [isServerMode]="true" [totalRows]="pagination.totalRows" [columns]="cols" [sortable]="true"
+        (changeServer)="changeServer($event)" [search]="search" skin="whitespace-nowrap table-hover">
+        <ng-template slot="createdAt" let-value="data">
+            {{ value.createdAt | date: 'dd/MM/yyyy' }}
+        </ng-template>
+        <ng-template slot="action" let-value="data">
+            <div class="flex items-center">
+                <div>
+                    <button type="button" class="ltr:mr-2 rtl:ml-2" ngxTippy="Visualizar"
+                        (click)="openFormModal(value, true)">
+                        <i class="fa-regular fa-eye fa-fw"></i>
+                    </button>
+                </div>
+                <div>
+                    <button type="button" class="ltr:mr-2 rtl:ml-2" ngxTippy="Editar" (click)="openFormModal(value)">
+                        <i class="fa-regular fa-pen-to-square fa-fw"></i>
+                    </button>
+                </div>
+                <div>
+                    <button type="button" ngxTippy="Eliminar" (click)="openDeleteModel(value)">
+                        <i class="fa-regular fa-trash-can fa-fw"></i>
+                    </button>
+                </div>
+            </div>
+        </ng-template>>
+    </ng-datatable>
+</div>
+
+<ngx-custom-modal #baseFormModal class="no-footer">
+    <ng-template #modalHeader>
+        <div class="font-medium">{{
+            readOnly ?( 'Visualizar ' + resourceLabel) : selectedItem ? ('Editar '+resourceLabel) : ('Adicionar ' +
+            resourceLabel) }}
+        </div>
+    </ng-template>
+    <ng-template #modalBody>
+        @if (readOnly) {
+        <ng-content select="[show]"></ng-content>
+        }
+        @else {
+        <ng-content select="[form]"></ng-content>
+        }
+
+    </ng-template>
+</ngx-custom-modal>
+<ngx-custom-modal #deleteModal class="no-footer">
+    <ng-template #modalHeader>
+        <div class="!font-medium">Eliminar {{resourceLabel}}</div>
+    </ng-template>
+    <ng-template #modalBody>
+        <div class="text-center text-sm">
+            <div class="mx-auto w-fit rounded-full bg-danger p-4 text-white ring-4 ring-danger/30">
+                <i class="fa-regular fa-trash-can fa-fw"></i>
+            </div>
+            <div class="mx-auto mt-5 sm:w-3/4">Tens a certeza que deseja eliminar?</div>
+
+            <div class="mt-8 flex items-center justify-center">
+                <button type="button" class="btn btn-outline-secondary" (click)="closeDeleteModal()">Cancelar</button>
+                <button type="button" class="btn btn-danger ltr:ml-4 rtl:mr-4" (click)="deleteItem()">Eliminar</button>
+            </div>
+        </div>
+    </ng-template>
+</ngx-custom-modal>

@@ -1,0 +1,15 @@
+<div>
+    <ul class="flex space-x-2 rtl:space-x-reverse">
+        <li>
+            <a href="javascript:;" class="text-primary hover:underline">Página Inicial</a>
+        </li>
+        <li class="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
+            <span>Países</span>
+        </li>
+    </ul>
+    <app-base-list resourceLabel="País" #list [cols]="cols" [baseService]="countryService">
+        <app-country-form form [model]="list.selectedItem" [modal]="list.baseFormModal"
+            (onComplete)="list.getPaginated()" />
+        <app-country-form show [model]="list.selectedItem" [modal]="list.baseFormModal" [readOnly]="true" />
+    </app-base-list>
+</div>

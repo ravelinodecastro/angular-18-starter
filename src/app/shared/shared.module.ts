@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { DataTableModule } from '@bhplugin/ng-datatable';
 import { NgxCustomModalComponent } from 'ngx-custom-modal';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { BaseListComponent } from './components/base-list/base-list.component';
 
 
@@ -17,13 +18,15 @@ import { BaseListComponent } from './components/base-list/base-list.component';
     ReactiveFormsModule,
     RouterModule,
     DataTableModule,
-    NgxCustomModalComponent
+    NgxCustomModalComponent,
+    NgSelectModule
   ],
   exports: [
     FormsModule,
     ReactiveFormsModule,
     DataTableModule,
     NgxCustomModalComponent,
+    NgSelectModule,
     BaseListComponent
   ]
 })

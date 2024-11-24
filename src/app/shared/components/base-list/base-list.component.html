@@ -1,11 +1,13 @@
 <div class="panel mt-5 h-[calc(100vh-190px)]">
     <div class="mb-4.5 flex flex-col gap-5 md:flex-row md:items-center">
+        @if(creatable) {
         <div class="flex items-center gap-2">
             <button class="btn btn-primary gap-2" (click)="openFormModal()">
                 <i class="fa-solid fa-plus fa-fw"></i>
                 Adicionar
             </button>
         </div>
+        }
         <div class="ltr:ml-auto rtl:mr-auto">
             <input [(ngModel)]="search" type="text" class="form-input" placeholder="Pesquisar..." />
         </div>
@@ -14,6 +16,14 @@
     <ng-datatable [rows]="rows" [pageSize]="pagination.size" [page]="pagination.page" [loading]="loading"
         [isServerMode]="true" [totalRows]="pagination.totalRows" [columns]="cols" [sortable]="true"
         (changeServer)="changeServer($event)" [search]="search" skin="whitespace-nowrap table-hover">
+
+        @for(col of cols; track col; let j = $index) {
+        @if(hasSlot(col.field)) {
+        <ng-template [slot]="col.field" let-data="data">
+            <ng-container [ngTemplateOutlet]="getSlot(col.field)" [ngTemplateOutletContext]="{ data }"></ng-container>
+        </ng-template>
+        }
+        }
         <ng-template slot="createdAt" let-value="data">
             {{ value.createdAt | date: 'dd/MM/yyyy' }}
         </ng-template>
@@ -25,18 +35,23 @@
                         <i class="fa-regular fa-eye fa-fw"></i>
                     </button>
                 </div>
+                @if(updatable) {
                 <div>
                     <button type="button" class="ltr:mr-2 rtl:ml-2" ngxTippy="Editar" (click)="openFormModal(value)">
                         <i class="fa-regular fa-pen-to-square fa-fw"></i>
                     </button>
                 </div>
+                }
+                @if(deletable) {
                 <div>
                     <button type="button" ngxTippy="Eliminar" (click)="openDeleteModel(value)">
                         <i class="fa-regular fa-trash-can fa-fw"></i>
                     </button>
                 </div>
+                }
+
             </div>
-        </ng-template>>
+        </ng-template>
     </ng-datatable>
 </div>
 

@@ -1,7 +1,7 @@
-import { Component, Input, OnInit, ViewChild, EventEmitter, Output } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, EventEmitter, Output, ContentChildren, TemplateRef, QueryList } from '@angular/core';
 import { Subject, debounceTime, distinctUntilChanged, finalize } from 'rxjs';
 import { NgxCustomModalComponent } from 'ngx-custom-modal';
-import { colDef } from '@bhplugin/ng-datatable';
+import { colDef, SlotDirective } from '@bhplugin/ng-datatable';
 import { BaseService } from '../../services/base.service';
 import { BaseFilter } from '../../models/base.filter';
 import { BaseModel } from '../../models/base.model';
@@ -29,10 +29,20 @@ export class BaseListComponent<M, C, U> implements OnInit {
 
     @Input() resourceLabel: string = '';
 
+    @Input() creatable: boolean = true;
+
+    @Input() updatable: boolean = true;
+
+    @Input() deletable: boolean = true;
+
     @Input() cols: colDef[] = [];
     @Input({required: true}) baseService!: BaseService<M, C, U, BaseFilter>;
     
     @Output() changeServerEvent = new EventEmitter<ChangeServer>();
+
+    @ContentChildren(SlotDirective) slots!: QueryList<SlotDirective>;
+    @ViewChild('defaultTemplate', { static: true }) defaultTemplate!: TemplateRef<any>;
+    slotsMap: Map<string, TemplateRef<any>> = new Map<string, TemplateRef<any>>();
 
     readOnly: boolean = false;
 
@@ -50,6 +60,15 @@ export class BaseListComponent<M, C, U> implements OnInit {
     ngOnInit(): void {
         this.getPaginated();
         this.onSearch();
+    }
+
+    ngAfterContentInit() {
+        this.slots.forEach((template) => {
+            const fieldName = template.fieldName;
+            if (fieldName) {
+                this.slotsMap.set(fieldName, template.templateRef);
+            }
+        });
     }
 
     openFormModal(item?: M, readOnly?: boolean): void {
@@ -121,5 +140,12 @@ export class BaseListComponent<M, C, U> implements OnInit {
         this.pagination.page = data.current_page;
         this.pagination.size = data.pagesize;
         this.sort = [data.sort_column];
+    }
+
+    hasSlot(fieldName: string = ''): boolean {
+        return this.slotsMap.has(fieldName);
+    }
+    getSlot(fieldName: string = ''): TemplateRef<any> {
+        return this.slotsMap.get(fieldName) || this.defaultTemplate;
     }
 }
